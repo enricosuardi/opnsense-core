@@ -206,6 +206,15 @@
                     <Default>0</Default>
                     <Required>Y</Required>
                 </use_ocsp>
+                <tls_min_ver type="OptionField">
+                    <BlankDesc>OpenVPN default</BlankDesc>
+                    <OptionValues>
+                        <item1 value="1.0">TLS 1.0</item1>
+                        <item2 value="1.1">TLS 1.1</item2>
+                        <item3 value="1.2">TLS 1.2</item3>
+                        <item4 value="1.3">TLS 1.3</item4>
+                    </OptionValues>
+                </tls_min_ver>
                 <auth type="OptionField">
                     <BlankDesc>OpenVPN default</BlankDesc>
                     <OptionValues>
@@ -232,18 +241,33 @@
                         <none>None (No Authentication)</none>
                     </OptionValues>
                 </auth>
+                <tls-cipher type="OptionField">
+                    <BlankDesc>OpenVPN default</BlankDesc>
+                    <OptionValues>
+                        <item1 value="DEFAULT:@SECLEVEL=0">Security Level 0</item1>
+                        <item2 value="DEFAULT:@SECLEVEL=1">Security Level 1</item2>
+                        <item3 value="DEFAULT:@SECLEVEL=2">Security Level 2</item3>
+                        <item4 value="DEFAULT:@SECLEVEL=3">Security Level 3</item4>
+                        <item5 value="DEFAULT:@SECLEVEL=4">Security Level 4</item5>
+                        <item6 value="DEFAULT:@SECLEVEL=5">Security Level 5</item6>
+                    </OptionValues>
+                </tls-cipher>
                 <data-ciphers type="OptionField">
                     <Multiple>Y</Multiple>
                     <OptionValues>
                         <AES-256-GCM>AES-256-GCM</AES-256-GCM>
+                        <AES-256-CBC>AES-256-CBC</AES-256-CBC>
                         <AES-128-GCM>AES-128-GCM</AES-128-GCM>
+                        <AES-128-CBC>AES-128-CBC</AES-128-CBC>
                         <CHACHA20-POLY1305>CHACHA20-POLY1305</CHACHA20-POLY1305>
                     </OptionValues>
                 </data-ciphers>
                 <data-ciphers-fallback type="OptionField">
                     <OptionValues>
                         <AES-256-GCM>AES-256-GCM</AES-256-GCM>
+                        <AES-256-CBC>AES-256-CBC</AES-256-CBC>
                         <AES-128-GCM>AES-128-GCM</AES-128-GCM>
+                        <AES-128-CBC>AES-128-CBC</AES-128-CBC>
                         <CHACHA20-POLY1305>CHACHA20-POLY1305</CHACHA20-POLY1305>
                     </OptionValues>
                 </data-ciphers-fallback>

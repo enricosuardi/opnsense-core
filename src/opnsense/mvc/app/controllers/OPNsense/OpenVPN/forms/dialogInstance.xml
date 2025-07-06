@@ -311,6 +311,18 @@
         </grid_view>
     </field>
     <field>
+        <id>instance.tls_min_ver</id>
+        <label>TLS minumum version</label>
+        <advanced>true</advanced>
+        <type>dropdown</type>
+        <help>
+            Defines the minimum TLS version to be used for control channel packets.
+        </help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
         <id>instance.auth</id>
         <label>Auth</label>
         <advanced>true</advanced>
@@ -318,6 +330,17 @@
         <help>
             Authenticate data channel packets and (if enabled) tls-auth control channel packets with HMAC using message digest algorithm alg.
         </help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>instance.tls-cipher</id>
+        <label>TLS Cipher</label>
+        <type>dropdown</type>
+        <advanced>true</advanced>
+        <style>role role_server</style>
+        <help>Restrict the allowed ciphers to be negotiated to the ciphers defined by the related OpenSSL Security Level.</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>

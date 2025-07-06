@@ -629,6 +629,14 @@ class OpenVPN extends BaseModel
                     $options['client-disconnect'] = "\"{$event_script} '{$node_uuid}'\"";
                     $options['tls-verify'] = "\"{$event_script} '{$node_uuid}'\"";
 
+                    if (!$node->tls_min_ver->isEmpty()) {
+                      $options['tls-version-min'] = $node->tls_min_ver;
+                    } 
+
+                    if (!$node->{'tls-cipher'}->isEmpty()) {
+                      $options['tls-cipher'] = $node->{'tls-cipher'};
+                    }
+
                     if (!$node->maxclients->isEmpty()) {
                         $options['max-clients'] = (string)$node->maxclients;
                     }
