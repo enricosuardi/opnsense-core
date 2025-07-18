@@ -70,11 +70,12 @@ function system_sysctl_defaults()
     global $config;
 
     /* notes:
-     *  - set 'optional' => true for values that should no longer be enforced by default
+     *  - always set 'default' so the backend can use it and the user can see it
+     *  - since this is a function the settings could be derived from confiugration
+     *    values or functions although in reality this is/was very rarely needed.
      *  - 'description' and 'type' can be used to indicate persistence of these values
      *    when in reality these are not available due to kernel modules unloaded or
      *    compile time options unset (like debugging)
-     *  - always set 'default' so the backend can use it and the user can see it
      */
 
     return [
@@ -84,6 +85,7 @@ function system_sysctl_defaults()
         'hw.vtnet.csum_disable' => [ 'default' => '1' ],
         'kern.coredump' => [ 'default' => '0' ],
         'kern.ipc.maxsockbuf' => [ 'default' => '4262144' ],
+        'kern.msgbuf_show_timestamp' => [ 'default' => '1' ],
         'kern.randompid' => [ 'default' => '1' ],
         'net.enc.in.ipsec_bpf_mask' => [ 'default' => '2' ], /* after processing */
         'net.enc.in.ipsec_filter_mask' => [ 'default' => '2' ], /* after processing */
@@ -145,14 +147,13 @@ function system_sysctl_get()
     $defaults = system_sysctl_defaults();
     $sysctls = [];
 
-    foreach ($defaults as $name => $info) {
+    foreach (array_keys($defaults) as $name) {
         /* compile list of required sysctls not necessarily present in config */
-        if (empty($info['optional'])) {
-            $sysctls[$name] = '';
-        }
+        $sysctls[$name] = '';
     }
 
     foreach (config_read_array('sysctl', 'item') as $tunable) {
+        /* get the user specified tunables from the configuration */
         $sysctls[$tunable['tunable']] = $tunable['value'];
     }
 
@@ -279,7 +280,6 @@ function get_locale_list()
 
     if (!product::getInstance()->development()) {
         /* below 30% progress or currently unvetted */
-        unset($locales['el_GR']);
         unset($locales['vi_VN']);
     }
 
@@ -1188,19 +1188,6 @@ function system_console_types()
     );
 }
 
-function system_console_speed()
-{
-    global $config;
-
-    $speed = 115200;
-
-    if (!empty($config['system']['serialspeed']) && is_numeric($config['system']['serialspeed'])) {
-        $speed = $config['system']['serialspeed'];
-    }
-
-    return $speed;
-}
-
 function system_cache_flush($verbose = false)
 {
     service_log('Flushing all caches...', $verbose);
@@ -1226,7 +1213,11 @@ function system_login_configure($verbose = false)
     /* depends on user account locking */
     local_sync_accounts();
 
-    $serialspeed = system_console_speed();
+    $serialspeed = 115200;
+
+    if (!empty($config['system']['serialspeed']) && is_numeric($config['system']['serialspeed'])) {
+        $serialspeed = $config['system']['serialspeed'];
+    }
 
     $new_boot_config = array();
     $new_boot_config['comconsole_speed'] = null;

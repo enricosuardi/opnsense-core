@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 
 """
-    Copyright (c) 2015 Ad Schellevis <ad@opnsense.org>
+    Copyright (c) 2025 Ad Schellevis <ad@opnsense.org>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -26,27 +26,37 @@
     POSSIBILITY OF SUCH DAMAGE.
 
     --------------------------------------------------------------------------------------
-    returns the contents of a pf table
-    usage : list_table.py [tablename]
+
+    package : configd
+    function: commandline tool to send commands to configd (response to stdout)
 """
-import subprocess
+
+import argparse
 import sys
-import ujson
+import os
+import syslog
+from modules import config, template, syslog_debug, syslog_error, syslog_notice
+
+__author__ = 'Ad Schellevis'
 
 if __name__ == '__main__':
-    result = dict()
-    if len(sys.argv) > 1:
-        sp = subprocess.run(['/sbin/pfctl', '-t', sys.argv[1], '-vT', 'show'], capture_output=True, text=True)
-        this_entry=None
-        labels = {}
-        for line in sp.stdout.split('\n'):
-            parts = line.split()
-            if len(parts) == 1:
-                this_entry = parts[0]
-                result[this_entry] = {'ip': this_entry}
-            elif this_entry and len(parts) > 6 and parts[3] != '0' and parts[3].isdigit() and parts[5].isdigit():
-                topic = parts[0].lower().replace('/', '_').replace(':', '')
-                result[this_entry]['%s_p' % topic] = int(parts[3])
-                result[this_entry]['%s_b' % topic] = int(parts[5])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('template', help='template(s) to match')
+    parser.add_argument('-c', help='configuration path (/conf/config.xml)', type=str, default='/conf/config.xml')
+    parser.add_argument('-r', help='root directory (/)', type=str, default='/')
+    args = parser.parse_args()
+    syslog.openlog(os.path.basename(sys.argv[0]))
 
-    print(ujson.dumps({'items': list(result.values())}))
+    # generate template
+    tmpl = template.Template(args.r)
+    conf = config.Config(args.c)
+    tmpl.set_config(conf.get())
+    filenames = tmpl.generate(args.template)
+    if filenames is None:
+        syslog_error('Unable to generate templates %s' % (args.template))
+        print('templates...failed')
+    else:
+        for filename in filenames:
+            syslog_debug(' %s generated %s' % (args.template, filename))
+        syslog_notice('%s %s finished successfully' % (os.path.basename(sys.argv[0]), args.template))
+        print('templates...done')

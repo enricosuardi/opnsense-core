@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2016-2025 Deciso B.V.
+ * Copyright (C) 2025 Deciso B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,25 +26,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once __DIR__ . '/../../../app/config/AppConfig.php';
+namespace OPNsense\System\Status;
 
-return new OPNsense\Core\AppConfig([
-    'application' => [
-        'baseUri' => '/opnsense_gui/',
-        'controllersDir' => __DIR__ . '/../../../app/controllers/',
-        'modelsDir' => __DIR__ . '/../../../app/models/',
-        'viewsDir' => __DIR__ . '/../../../app/views/',
-        'pluginsDir' => __DIR__ . '/../../../app/plugins/',
-        'libraryDir' => __DIR__ . '/../../../app/library/',
-        'contribDir' => __DIR__ . '/../../../../../../contrib',
-        /* XXX consider changing these for testing environment */
-        'cacheDir' => '/var/lib/php/cache',
-        'tempDir' => '/var/lib/php/tmp',
-        'configDir' => '/conf',
-    ],
-    'globals' => [
-        'debug'          => false,
-        'owner'          => 'wwwonly:wheel',
-        'simulate_mode'  => false,
-    ],
-]);
+use OPNsense\System\AbstractStatus;
+use OPNsense\System\SystemStatusCode;
+
+class IDSOverrideStatus extends AbstractStatus
+{
+    public function __construct()
+    {
+        $this->internalPriority = 2;
+        $this->internalPersistent = true;
+        $this->internalIsBanner = true;
+        $this->internalTitle = gettext('IDS config override');
+        $this->internalScope = [
+            '/ui/ids',
+            '/ui/ids/policy',
+        ];
+    }
+
+    public function collectStatus()
+    {
+        $fileHash = @hash_file('sha256', '/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml');
+        $sampleHash = @hash_file('sha256', '/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml.sample');
+
+        if ($fileHash && $sampleHash && $fileHash !== $sampleHash) {
+            $this->internalMessage = gettext(
+                'The configuration contains manual overwrites, these may interfere with the settings configured here.'
+            );
+            $this->internalStatus = SystemStatusCode::NOTICE;
+        }
+    }
+}

@@ -81,6 +81,7 @@
 /usr/local/etc/pkg/fingerprints/OPNsense/revoked/pkg.opnsense.org.20240105
 /usr/local/etc/pkg/fingerprints/OPNsense/revoked/pkg.opnsense.org.20240611
 /usr/local/etc/pkg/fingerprints/OPNsense/trusted/pkg.opnsense.org.20241217
+/usr/local/etc/pkg/fingerprints/OPNsense/trusted/pkg.opnsense.org.20250710
 /usr/local/etc/rc
 /usr/local/etc/rc.bootup
 /usr/local/etc/rc.carp_service_status.d/.placeholder
@@ -151,7 +152,6 @@
 /usr/local/etc/rc.syshook.d/stop/99-config
 /usr/local/etc/rc.syshook.d/update/10-refresh.sh
 /usr/local/etc/rc.syshook.d/upgrade/10-sanity.sh
-/usr/local/etc/rc.syshook.d/upgrade/20-unbound-duckdb.py
 /usr/local/etc/rc.syshook.d/upgrade/90-cleanup.sh
 /usr/local/etc/ssh/sshd_config.d/README
 /usr/local/etc/ssl/ext_sources/README
@@ -560,6 +560,7 @@
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/DiskSpaceStatus.php
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/DnsmasqOverrideStatus.php
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/FirewallStatus.php
+/usr/local/opnsense/mvc/app/library/OPNsense/System/Status/IDSOverrideStatus.php
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/IPsecOverrideStatus.php
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/LiveMediaStatus.php
 /usr/local/opnsense/mvc/app/library/OPNsense/System/Status/MonitOverrideStatus.php
@@ -1381,6 +1382,7 @@
 /usr/local/opnsense/service/modules/session.py
 /usr/local/opnsense/service/modules/template.py
 /usr/local/opnsense/service/run_unittests.py
+/usr/local/opnsense/service/template_ctl.py
 /usr/local/opnsense/service/templates/OPNsense/Auth/+TARGETS
 /usr/local/opnsense/service/templates/OPNsense/Auth/csh.cshrc
 /usr/local/opnsense/service/templates/OPNsense/Auth/ipsec.pam

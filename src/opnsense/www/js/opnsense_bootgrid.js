@@ -1162,6 +1162,8 @@ class UIBootgrid {
             resizable: "header",
             placeholder: this.placeholder[0],
             layout: 'fitColumns',
+            // tabulator uses "." for nested field access, disable this behavior since our keys can contain a dot.
+            nestedFieldSeparator:false,
             columns: this._parseColumns(),
 
             /* SERVER-SIDE OPTIONS */
@@ -1412,7 +1414,9 @@ class UIBootgrid {
                     this._onCellRendered(cell, formatterParams);
                 });
 
-                return cell.getValue();
+                const key = `%${cell.getColumn().getDefinition().field}`;
+                const data = cell.getData();
+                return data[key] ?? cell.getValue();
             },
             commands: (cell, formatterParams, onRendered) => {
                 let html = [];

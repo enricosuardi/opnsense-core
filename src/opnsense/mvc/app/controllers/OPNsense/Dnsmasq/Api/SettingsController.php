@@ -110,14 +110,28 @@ class SettingsController extends ApiMutableModelControllerBase
     public function downloadHostsAction()
     {
         if ($this->request->isGet()) {
-            $this->exportCsv($this->getModel()->hosts->asRecordSet(false, ['comments']));
+            $map = [
+                'ip' => 'ip_address',
+                'hwaddr' => 'hw_address',
+                'host' => 'hostname',
+                'descr' => 'description'
+            ];
+
+            $result = array_map(function ($item) use ($map) {
+                return array_combine(
+                    array_map(fn($k) => $map[$k] ?? $k, array_keys($item)),
+                    array_values($item)
+                );
+            }, $this->getModel()->hosts->asRecordSet(false, ['comments']));
+
+            $this->exportCsv($result);
         }
     }
 
     public function uploadHostsAction()
     {
         if ($this->request->isPost() && $this->request->hasPost('payload')) {
-            /* fields used by kea */
+            /* fields used by kea (and isc dhcp export) */
             $map = [
                 'ip_address' => 'ip',
                 'hw_address' => 'hwaddr',

@@ -381,21 +381,12 @@ abstract class BaseField
     }
 
     /**
-     * return field current value (deprecated)
-     * @return string field current value
-     */
-    public function getCurrentValue(): string
-    {
-        return (string)$this->internalValue;
-    }
-
-    /**
-     * return field current value
+     * return field current value in order to be able to override it
      * @return string field current value
      */
     public function getValue(): string
     {
-        return $this->getCurrentValue();
+        return (string)$this->internalValue;
     }
 
     /**
@@ -720,8 +711,9 @@ abstract class BaseField
     }
 
     /**
-     * get nodes as array structure using getValue() and getDescription() as leaves, the latter prefixed with a
-     * dollar sign ($) as these are impossible to exist in our xml structure. (eg field, $field)
+     * get nodes as array structure using getValue() and (optionally) getDescription() as leaves,
+     * the latter prefixed with a dollar sign ($) as these are impossible to exist in our xml structure.
+     * (eg field, $field)
      * @return array
      */
     public function getNodeContent()
@@ -732,7 +724,10 @@ abstract class BaseField
                 $result[$key] = $node->getNodeContent();
             } else {
                 $result[$key] = $node->getValue();
-                $result['$' . $key] = $node->getDescription();
+                $descr = $node->getDescription();
+                if ($descr != $result[$key]) {
+                    $result['%' . $key] = $descr;
+                }
             }
         }
         return $result;
